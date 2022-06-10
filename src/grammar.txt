@@ -15,11 +15,11 @@ variable -> NAME
 
 littéral -> INT | BOOL | tuple
 
-tuple -> ( littéral , littéral )
+tuple -> '[' littéral , littéral ']'
 
-unaire -> [+|-|++|--|!|not] operand | operand [++|--]
+unaire -> [+|-|!] operand 
 
-binaire -> operand [&&||||<|<=|>|>=|==|!=|+|-|*|/|%|^] operand
+binaire -> operand [&|'|'|<|<=|>|>=|==|!=|+|-|*|/|%|^] operand
 
 operand -> variable | littéral
 
@@ -32,8 +32,8 @@ expression ->
     | unaire
     | binaire 
     | declaration
-    | let declaration in expression
-    | case expression of { (pattern, expression) }
+    | let { declaration } in expression
+    | case '(' expression ')' of { pattern ':' expression }
     | fonction
 
 pattern -> 
