@@ -1,0 +1,43 @@
+{-
+    Nom du fichier : grammar.txt
+    Auteurs :
+        - Nelson Jeanrenaud
+        - Alice Grunder
+-}
+
+INT -> [+|-][0-9]+
+
+BOOL -> true | false
+
+NAME -> [a-zA-Z_][0-9a-zA-Z_]*
+
+variable -> NAME
+
+littéral -> INT | BOOL | tuple
+
+tuple -> ( littéral , littéral )
+
+unaire -> [+|-|++|--|!|not] operand | operand [++|--]
+
+binaire -> operand [&&||||<|<=|>|>=|==|!=|+|-|*|/|%|^] operand
+
+operand -> variable | littéral
+
+declaration -> variable = littéral
+
+fonction -> NAME '(' {variable} ')' '{' {expression} '}'
+
+expression -> 
+    operand
+    | unaire
+    | binaire 
+    | declaration
+    | let declaration in expression
+    | case expression of { (pattern, expression) }
+    | fonction
+
+pattern -> 
+    _
+    | variable
+    | littéral
+
