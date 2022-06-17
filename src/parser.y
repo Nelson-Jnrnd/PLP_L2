@@ -77,9 +77,7 @@ Expr : let var '=' Expr in Expr             {Let $2 $4 $6}
      | Expr '|' Expr                        {Bin '|' $1 $3}
      | var '=' Expr                         {Assign $1 $3}
      | var                                  {Var $1}
-     | int                                  {Cst $1}
-     | bool                                 {LBool $1}
-     | '[' Expr ',' Expr ']'                {LTuple $2 $4}
+     | Lit                                  {$1}
 
 Exprs : Expr Exprs                  {$1 : $2}
       | Expr                        {[$1]}
@@ -91,6 +89,10 @@ Patern : Lit ':' Expr               {$1 : $3}
 
 FuncVars : var FuncVars             {$2 : $1}
          | var                      {[$1]}
+
+Lit : int                                  {Cst $1}
+    | bool                                 {LBool $1}
+    | '[' Expr ',' Expr ']'                {LTuple $2 $4}
 
 {
 parseError :: [Token] -> a
@@ -104,11 +106,13 @@ data Expr = Let String Expr Expr
     | Bin Char Expr Expr
     | Assign String Expr
     | Var String
-    | Cst Int
-    | LBool Bool
-    | LTuple Expr Expr
+    | Lit Lit
     deriving (Show, Eq)
 
 data Patern = Patern Lit Expr
     deriving (Show, Eq)
+
+data Lit = Cst Int
+    | LBool Bool
+    | LTuple Expr Expr
 }
