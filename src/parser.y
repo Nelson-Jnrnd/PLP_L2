@@ -104,14 +104,11 @@ data Expr = Let String Expr Expr
     | Bin Char Expr Expr
     | Assign String Expr
     | Var String
-    | Cst Lit
+    | Cst Int
+    | LBool Bool
+    | LTuple Expr Expr
     deriving (Show, Eq)
 
 data Patern = Patern Lit Expr
     deriving (Show, Eq)
-
-data Lit  = LInt Int
-    | LBool Bool
-    | LTuple Lit Lit
-    deriving (Show)
 }
