@@ -1,5 +1,5 @@
 {
-module Main (main) where
+module Main (main, alexScanTokens , Token (..)) where
 }
 
 %wrapper "basic"
@@ -40,8 +40,8 @@ tokens :-
 data Token
     = TVar String
     | TFunc String
-    | TInt TInt
-    | TBool TBool
+    | TInt Int
+    | TBool Bool
     | TLParen
     | TRParen
     | TLBracket
