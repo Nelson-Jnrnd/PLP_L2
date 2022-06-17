@@ -3,16 +3,13 @@ module Main (main) where
 }
 
 %wrapper "basic"
--- digit negatif ??
--- tuple de tuple ??
--- Comment faire les unaires ??
 
 $digit = 0-9            -- digits
 $alpha = [a-zA-Z]       -- alphabetic characters
 @literal = $digit | $alpha
 
 @name = $alpha [$alpha $digit]* -- identifier characters
-@symbols = "_" | "+" | "-" | "*" | "/" | "^" | "%" | "|" | "&" | "!" | ">" | "<" | "="
+@symbols = "_" | "+" | "-" | "*" | "/" | "^" | "%" | "|" | "&" | "!" | "="
 
 tokens :-
 
