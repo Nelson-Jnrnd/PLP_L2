@@ -49,6 +49,7 @@ data Token
     | TSym String
     | TLet
     | TIn
+    | TOf
     | TCase
   deriving (Eq, Show)
 
