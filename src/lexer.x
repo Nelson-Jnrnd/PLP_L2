@@ -12,38 +12,27 @@ $alpha = [a-zA-Z]       -- alphabetic characters
 @literal = $digit | $alpha
 
 @name = $alpha [$alpha $digit]* -- identifier characters
+@symbols = "_" | "+" | "-" | "*" | "/" | "^" | "%" | "|" | "&" | "!" | ">" | "<" | "="
 
 tokens :-
 
     $white+                        ;
-    "("                            { \s -> TLParen   }
-    ")"                            { \s -> TRParen  }
-    "["                            { \s -> TLBracket      }
-    "]"                            { \s -> TRBracket     }
-    "{"                            { \s -> TLBrace        }
-    "}"                            { \s -> TRBrace       }
-    ":"                            { \s -> Colon              }
+    "("                            { \s -> TLParen             }
+    ")"                            { \s -> TRParen             }
+    "["                            { \s -> TLBracket           }
+    "]"                            { \s -> TRBracket           }
+    "{"                            { \s -> TLBrace             }
+    "}"                            { \s -> TRBrace             }
     ","                            { \s -> TComma              }
-    "_"                            { \s -> Underscore         }
     "True"                         { \s -> TBool True          }
     "False"                        { \s -> TBool False         }
-    "+"                            { \s -> Plus               }
-    "-"                            { \s -> Minus              }
-    "!"                            { \s -> Negative           }
-    ">"                            { \s -> Greater            }
-    "<"                            { \s -> Less               }
-    "&"                            { \s -> And                }
-    "|"                            { \s -> Or                 }
-    "%"                            { \s -> Mod                }
-    "^"                            { \s -> Pow                }
-    "*"                            { \s -> Multiply           }
-    "/"                            { \s -> Divide             }    
-    "="                            { \s -> Assign             }
+    ":"                            { \s -> TColon              }
     "let"                          { \s -> TLet                }
     "in"                           { \s -> TIn                 }
     "case"                         { \s -> TCase               }
-    @name                          { \s -> TVar s               }    
+    @name                          { \s -> TVar s              }    
     $digit+                        { \s -> TInt (read s)       }
+    @symbols                       { \s -> TSym s              }
 {
 -- Each action has type :: String -> Token
 
@@ -58,21 +47,8 @@ data Token
     | TRBracket
     | TLBrace
     | TRBrace
-    | Colon
-    | Underscore
     | TComma
-    | Plus
-    | Minus
-    | Negative
-    | Greater
-    | Less
-    | And
-    | Or
-    | Mod
-    | Pow
-    | Multiply
-    | Divide
-    | Assign
+    | TSym String
     | TLet
     | TIn
     | TCase
