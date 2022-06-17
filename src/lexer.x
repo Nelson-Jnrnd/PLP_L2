@@ -8,7 +8,8 @@ $digit = 0-9            -- digits
 $alpha = [a-zA-Z]       -- alphabetic characters
 @literal = $digit | $alpha
 
-@name = $alpha [$alpha $digit]* -- identifier characters
+@name = [a-z][$alpha $digit]* -- identifier characters
+@func = [A-Z][$alpha $digit]* -- function name characters
 @symbols = "_" | "+" | "-" | "*" | "/" | "^" | "%" | "|" | "&" | "!" | "="
 
 tokens :-
@@ -28,7 +29,8 @@ tokens :-
     "in"                           { \s -> TIn                 }
     "case"                         { \s -> TCase               }
     "of"                           { \s -> TOf                 }
-    @name                          { \s -> TVar s              }    
+    @name                          { \s -> TVar s              }
+    @func                          { \s -> TFunc s             }    
     $digit+                        { \s -> TInt (read s)       }
     @symbols                       { \s -> TSym s              }
 {
@@ -37,6 +39,7 @@ tokens :-
 -- The token type:
 data Token
     = TVar String
+    | TFunc String
     | TInt TInt
     | TBool TBool
     | TLParen
