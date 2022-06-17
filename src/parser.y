@@ -30,6 +30,7 @@ import Lexer
     '}'     { TRBrace   }
     '['     { TLBracket }
     ']'     { TRBracket }
+    ':'     { TColon    }
     ','     { TComma    }
     '_'     { TSym  '_' }
     '='     { TSym  '=' }

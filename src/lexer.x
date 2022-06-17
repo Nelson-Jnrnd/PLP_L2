@@ -27,6 +27,7 @@ tokens :-
     "let"                          { \s -> TLet                }
     "in"                           { \s -> TIn                 }
     "case"                         { \s -> TCase               }
+    "of"                           { \s -> TOf                 }
     @name                          { \s -> TVar s              }    
     $digit+                        { \s -> TInt (read s)       }
     @symbols                       { \s -> TSym s              }
