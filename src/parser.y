@@ -115,4 +115,5 @@ data Patern = Patern Lit Expr
 data Lit = Cst Int
     | LBool Bool
     | LTuple Expr Expr
+    deriving (Show, Eq)
 }

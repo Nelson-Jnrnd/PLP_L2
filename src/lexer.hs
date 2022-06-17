@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -fno-warn-unused-binds -fno-warn-missing-signatures #-}
 {-# LANGUAGE CPP #-}
 {-# LINE 1 "lexer.x" #-}
-module Main (main, alexScanTokens , Token (..)) where
+module Lexer (lexer , Token (..)) where
 #if __GLASGOW_HASKELL__ >= 603
 #include "ghcconfig.h"
 #elif defined(__GLASGOW_HASKELL__)
@@ -4421,7 +4421,7 @@ data Token
     | TLBrace
     | TRBrace
     | TComma
-    | TSym String
+    | TSym Char
     | TLet
     | TIn
     | TOf
@@ -4429,9 +4429,7 @@ data Token
     | TColon
   deriving (Eq, Show)
 
-main = do
-  s <- getContents
-  print (alexScanTokens s)
+lexer = alexScanTokens
 alex_action_1 = \s -> TLParen
 alex_action_2 = \s -> TRParen
 alex_action_3 = \s -> TLBracket
@@ -4449,7 +4447,7 @@ alex_action_14 = \s -> TOf
 alex_action_15 = \s -> TVar s
 alex_action_16 = \s -> TFunc s
 alex_action_17 = \s -> TInt (read s)
-alex_action_18 = \s -> TSym s
+alex_action_18 = \s -> TSym (head s)
 
 #define ALEX_NOPRED 1
 -- -----------------------------------------------------------------------------

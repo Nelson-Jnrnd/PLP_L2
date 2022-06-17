@@ -966,6 +966,7 @@ data Patern = Patern Lit Expr
 data Lit = Cst Int
     | LBool Bool
     | LTuple Expr Expr
+    deriving (Show, Eq)
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- $Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp $
 

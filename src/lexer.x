@@ -1,5 +1,5 @@
 {
-module Main (main, alexScanTokens , Token (..)) where
+module Lexer (lexer , Token (..)) where
 }
 
 %wrapper "basic"
@@ -32,7 +32,7 @@ tokens :-
     @name                          { \s -> TVar s              }
     @func                          { \s -> TFunc s             }    
     $digit+                        { \s -> TInt (read s)       }
-    @symbols                       { \s -> TSym s              }
+    [\_\=\+\-\*\/\^\%\|\&\!]       { \s -> TSym (head s)       }
 {
 -- Each action has type :: String -> Token
 
@@ -49,7 +49,7 @@ data Token
     | TLBrace
     | TRBrace
     | TComma
-    | TSym String
+    | TSym Char
     | TLet
     | TIn
     | TOf
@@ -57,7 +57,5 @@ data Token
     | TColon
   deriving (Eq, Show)
 
-main = do
-  s <- getContents
-  print (alexScanTokens s)
+lexer = alexScanTokens
 }
