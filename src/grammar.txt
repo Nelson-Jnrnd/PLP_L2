@@ -19,7 +19,7 @@ tuple -> '[' littéral , littéral ']'
 
 unaire -> [+|-|!] operand 
 
-binaire -> operand [&|'|'|<|<=|>|>=|==|!=|+|-|*|/|%|^] operand
+binaire -> operand [&|'|'|<|>|+|-|*|/|%|^] operand
 
 operand -> variable | littéral
 
