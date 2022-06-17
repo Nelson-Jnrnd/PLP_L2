@@ -9,9 +9,11 @@ INT -> [+|-][0-9]+
 
 BOOL -> true | false
 
-NAME -> [a-zA-Z_][0-9a-zA-Z_]*
+VARIABLE_NAME -> [a-z][0-9a-zA-Z_']*
 
-variable -> NAME
+FUNCTION_NAME -> [A-Z][0-9a-zA-Z_']*
+
+variable -> VARIABLE_NAME
 
 littéral -> INT | BOOL | tuple
 
@@ -19,22 +21,25 @@ tuple -> '[' littéral ',' littéral ']'
 
 unaire -> [-|!] operand 
 
-binaire -> operand [&|'|'|<|<=|>|>=|==|!=|+|-|*|/|%|^] operand
+binaire -> operand [&|'|'|+|-|*|/|%|^] operand
 
 operand -> variable | littéral
 
 declaration -> variable = littéral
 
-function -> NAME '(' {variable} ')' '{' {expression} '}'
+functionDeclaration -> FUNCTION_NAME '(' {variable} ')' '{' {expression} '}'
+
+functionCall -> FUNCTION_NAME '(' {expression} ')'
 
 expression -> 
     operand
     | unaire
     | binaire 
     | declaration
-    | let declaration in expression
-    | case '(' expression ')' of { pattern ':' expression }
-    | function
+    | let  declaration in expression 
+    | case expression of { pattern ':' expression }
+    | functionDeclaration
+    | functionCall
 
 pattern -> 
     _

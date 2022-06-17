@@ -23,6 +23,7 @@ import Lexer
     int     { TInt  $$  }
     bool    { TBool $$  }
     var     { TVar  $$  }
+    func    { TFunc $$  }
     '('     { TLParen   }
     ')'     { TRParen   }
     '{'     { TLBrace   }
@@ -36,17 +37,9 @@ import Lexer
     '-'     { TSym  '-' }
     '*'     { TSym  '*' }
     '/'     { TSym  '/' }
-    '%'     { TSym  '%' }
-    '^'     { TSym  '^' }
-    '<'     { TSym  '<' }
-    '>'     { TSym  '>' }
     '!'     { TSym  '!' }
     '&'     { TSym  '&' }
     '|'     { TSym  '|' }
-    "=="    { TSym "==" }
-    "!="    { TSym "!=" }
-    "<="    { TSym "<=" }
-    ">="    { TSym ">=" }
 
 -- Définition des priorités et associativités
 %right of
@@ -63,36 +56,39 @@ import Lexer
 %%
 
 -- Régle de la grammaire
-Expr : let var '=' Expr in Expr     {Let $2 $4 $6}
-     | case '(' Expr ')' of Paterns {Case $3 $5 $7}
-     | '-' Expr %prec NEG           {Un '-' $2}
-     | Expr '+' Expr                {Bin '+' $1 $3}
-     | Expr '-' Expr                {Bin '-' $1 $3}
-     | Expr '*' Expr                {Bin '*' $1 $3}
-     | Expr '/' Expr                {Bin '/' $1 $3}
-     | Expr '%' Expr                {Bin '%' $1 $3}
-     | Expr '^' Expr                {Bin '^' $1 $3}
-     | Expr '<' Expr                {Bin '<' $1 $3}
-     | Expr '>' Expr                {Bin '>' $1 $3}
-     | Expr "==" Expr               {Bin "==" $1 $3}
-     | Expr "!=" Expr               {Bin "!=" $1 $3}
-     | Expr "<=" Expr               {Bin "<=" $1 $3}
-     | Expr ">=" Expr               {Bin ">=" $1 $3}
-     | '!' Expr                     {Un '!' $2}
-     | Expr '&' Expr                {Bin '&' $1 $3}
-     | Expr '|' Expr                {Bin '|' $1 $3}
-     | '(' Expr ')'                 {Paren $2}
-     | '{' Expr '}'                 {Brace $2}
-     | Lit
+Expr : let var '=' Expr in Expr             {Let $2 $4 $6}
+     | case Expr of Paterns                 {Case $3 $5 $7}
+     | func '(' Exprs ')'                   {FuncCall $1 $3}
+     | func '(' ')'                         {FuncCall $1 '_'}
+     | func '(' FuncVars ')' '{' Expr '}'   {FuncDeclar $1 $3 $5}
+     | func '(' ')' '{' Expr '}'            {FuncDeclar $1 '_' $4}
+     | '-' Expr %prec NEG                   {Un '-' $2}
+     | Expr '+' Expr                        {Bin '+' $1 $3}
+     | Expr '-' Expr                        {Bin '-' $1 $3}
+     | Expr '*' Expr                        {Bin '*' $1 $3}
+     | Expr '/' Expr                        {Bin '/' $1 $3}
+     | Expr '%' Expr                        {Bin '%' $1 $3}
+     | Expr '^' Expr                        {Bin '^' $1 $3}
+     | '!' Expr                             {Un '!' $2}
+     | Expr '&' Expr                        {Bin '&' $1 $3}
+     | Expr '|' Expr                        {Bin '|' $1 $3}
+     | var '=' Expr                         {Assign $1 $3}
+     | var                                  {Var $1}
+     | Lit                                  {Lit $1}
 
-Paterns : Paterns  Patern           {$2 : $1}
+Exprs : Expr Exprs                  {$1 : $2}
+      | Expr                        {[$1]}
+
+Paterns : Patern Paterns            {$1 : $2}
         | Patern                    {[$1]}
 
 Patern : Lit ':' Expr               {$1 : $3}
 
+FuncVars : var FuncVars             {$2 : $1}
+         | var                      {[$1]}
+
 Lit : int                           {Int $1}
     | bool                          {Bool $1}
-    | var                           {Var $1}
     | '[' Lit ',' Lit ']'           {Tuple $1 $3 $5}
 
 {
@@ -101,14 +97,25 @@ Lit : int                           {Int $1}
 
     data Expr
         = Let Name Expr Expr
-        | Case Expr [Paterns]
+        | Case Expr [Patern]
+        | FuncCall Name [Expr]
+        | FuncDeclar Name [Name] [Expr]
         | Un Char Expr
         | Bin Char Expr Expr
-        | Paren Expr
-        | Brace Expr
-        | Lit Lit
-    
-    data Paterns
+        | Assign Name Expr
+        | Var Name
+        | Cst Lit
+        deriving (Show, Eq)
+
+    data Patern
         = Patern Name Expr
-        | [Patern]
+        deriving (Show, Eq)
+
+    data Lit 
+        = Int Int
+        | Bool Bool
+        | Tuple Lit Lit
+        deriving (Show, Eq)
+
+    data Name = String
 }
