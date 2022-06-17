@@ -52,7 +52,9 @@ data Token
     | TSym String
     | TLet
     | TIn
+    | TOf
     | TCase
+    | TColon
   deriving (Eq, Show)
 
 main = do
