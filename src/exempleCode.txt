@@ -1,0 +1,11 @@
+x = 1 // déclaration and affectation of x, x is an integer
+
+F(a b) { a*a + b*b } // function declaration
+
+F(x 3) // function call
+
+b = case x of 
+        0 : false
+        _ : true
+
+z = let y = 3 in F(x y) // return value of F(x, y)
