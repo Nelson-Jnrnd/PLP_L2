@@ -41,11 +41,13 @@ import Lexer
     '!'     { TSym  '!' }
     '&'     { TSym  '&' }
     '|'     { TSym  '|' }
+    '%'     { TSym  '%' }
+    '^'     { TSym  '^' }
+
 
 -- Définition des priorités et associativités
 %right of
 %right in
-%nonasoc case '<' '>' '=' "==" "!=" "<=" ">="
 %left '+' '-'
 %left '*' '/' 
 %left '%'
@@ -58,7 +60,7 @@ import Lexer
 
 -- Régle de la grammaire
 Expr : let var '=' Expr in Expr             {Let $2 $4 $6}
-     | case Expr of Paterns                 {Case $3 $5 $7}
+     | case Expr of Paterns                 {Case $2 $3}
      | func '(' Exprs ')'                   {FuncCall $1 $3}
      | func '(' ')'                         {FuncCall $1 '_'}
      | func '(' FuncVars ')' '{' Expr '}'   {FuncDeclar $1 $3 $5}
