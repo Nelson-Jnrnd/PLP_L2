@@ -9,6 +9,7 @@ $alpha = [a-zA-Z]       -- alphabetic characters
 @literal = $digit | $alpha
 
 @name = $alpha [$alpha $digit]* -- identifier characters
+@funcName = [A-Z] []
 @symbols = "_" | "+" | "-" | "*" | "/" | "^" | "%" | "|" | "&" | "!" | "="
 
 tokens :-
@@ -37,8 +38,8 @@ tokens :-
 -- The token type:
 data Token
     = TVar String
-    | TInt TInt
-    | TBool TBool
+    | TInt Int
+    | TBool Bool
     | TLParen
     | TRParen
     | TLBracket
@@ -51,6 +52,7 @@ data Token
     | TIn
     | TOf
     | TCase
+    | TColon
   deriving (Eq, Show)
 
 main = do
