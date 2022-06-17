@@ -12,58 +12,55 @@ $alpha = [a-zA-Z]       -- alphabetic characters
 @literal = $digit | $alpha
 
 @name = $alpha [$alpha $digit]* -- identifier characters
-@tuple = "[" @literal "," @literal "]" -- tuple
 
 tokens :-
 
     $white+                        ;
-    "("                              { \s -> Parenthesis_Left         }
-    ")"                              { \s -> Parenthesis_Right        }
-    "["                              { \s -> Brackets_Left      }
-    "]"                              { \s -> Brackets_Right     }
-    "{"                             { \s -> Braces_Left        }
-    "}"                             { \s -> Braces_Right       }
-    ":"                              { \s -> Colon               }
-    "_"                              { \s -> Underscore          }
-    "True"                             { \s -> Bool True}
-    "False"                            { \s -> Bool False}
-    "+"                       { \s -> Plus }
-    "-"                       { \s -> Minus }
-    "!"                       { \s -> Negative }
-    ">"              { \s -> Greater }
-    "<"             { \s -> Less }
-    "&"              { \s -> And }
-    "|"              { \s -> Or }
-    "%"              {\s ->  Mod }
-    "^"              { \s -> Pow }
-    "*"              { \s -> Multiply }
-    "/"              { \s -> Divide }    
-    "="             { \s -> Assign }
-    "let"          { \s -> Let }
-    "in"          { \s -> In }
-    "case"          { \s -> Case }
-    
-    $digit+                         { \s -> Int (read s) }
-    $alpha [$alpha $digit \_ \']*   { \s -> Var s }
-    @name                           { \s -> Id s }
-
+    "("                            { \s -> TLParen   }
+    ")"                            { \s -> TRParen  }
+    "["                            { \s -> TLBracket      }
+    "]"                            { \s -> TRBracket     }
+    "{"                            { \s -> TLBrace        }
+    "}"                            { \s -> TRBrace       }
+    ":"                            { \s -> Colon              }
+    ","                            { \s -> TComma              }
+    "_"                            { \s -> Underscore         }
+    "True"                         { \s -> TBool True          }
+    "False"                        { \s -> TBool False         }
+    "+"                            { \s -> Plus               }
+    "-"                            { \s -> Minus              }
+    "!"                            { \s -> Negative           }
+    ">"                            { \s -> Greater            }
+    "<"                            { \s -> Less               }
+    "&"                            { \s -> And                }
+    "|"                            { \s -> Or                 }
+    "%"                            { \s -> Mod                }
+    "^"                            { \s -> Pow                }
+    "*"                            { \s -> Multiply           }
+    "/"                            { \s -> Divide             }    
+    "="                            { \s -> Assign             }
+    "let"                          { \s -> TLet                }
+    "in"                           { \s -> TIn                 }
+    "case"                         { \s -> TCase               }
+    @name                          { \s -> TVar s               }    
+    $digit+                        { \s -> TInt (read s)       }
 {
 -- Each action has type :: String -> Token
 
 -- The token type:
 data Token
-    = Id String
-    | Var String
-    | Int Int
-    | Bool Bool
-    | Parenthesis_Left
-    | Parenthesis_Right
-    | Brackets_Left
-    | Brackets_Right
-    | Braces_Left
-    | Braces_Right
+    = TVar String
+    | TInt TInt
+    | TBool TBool
+    | TLParen
+    | TRParen
+    | TLBracket
+    | TRBracket
+    | TLBrace
+    | TRBrace
     | Colon
     | Underscore
+    | TComma
     | Plus
     | Minus
     | Negative
@@ -76,9 +73,9 @@ data Token
     | Multiply
     | Divide
     | Assign
-    | Let
-    | In
-    | Case
+    | TLet
+    | TIn
+    | TCase
   deriving (Eq, Show)
 
 main = do
