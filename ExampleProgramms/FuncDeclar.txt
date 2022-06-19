@@ -1,0 +1,6 @@
+F(a b){
+    case a of
+        True -> let x = 1 in b + x
+        False -> -b
+        _ -> 0
+}

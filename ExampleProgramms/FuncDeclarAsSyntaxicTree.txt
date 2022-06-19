@@ -1,0 +1,1 @@
+FuncDeclar "F" ["a", "b"] (Case (Var "a") [[(LBool True), Let "x" (Cst 1) (Bin "+" (Var "b") (Var "x"))], [(LBool False), Un "-" (Var "b")]] (Cst 0))
