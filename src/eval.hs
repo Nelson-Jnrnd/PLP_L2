@@ -1,3 +1,6 @@
+module Eval(eval, Env(..), EnvValue(..), Lit(..), EvalReturn(..)) where
+
+-- import Semantics
 import Parser
 import Prelude hiding (lookup)
 
