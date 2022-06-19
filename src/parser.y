@@ -6,7 +6,7 @@
 -}
 
 {
-module Parser (Expr (..), Patern (..), Lit (..), Program(..), Statement(..), Name) where
+module Parser (Expr (..), Lit (..), Program(..), Statement(..)) where
 import Lexer
 }
 
@@ -64,8 +64,8 @@ Program :
     Expr                                    { PExpr $1 }
     | Statement                             { PStatement $1 }
 
-Statement : func "(" FuncVars ")" "{" Expr "}"   {FuncDeclar $1 $3 $5}
-     | func "(" ")" "{" Expr "}"            {FuncDeclar $1 _ $4}
+Statement : func "(" FuncVars ")" "{" Expr "}"   {FuncDeclar $1 $3 $6}
+     | func "(" ")" "{" Expr "}"            {FuncDeclar $1 _ $5}
      | var "=" Expr                         {Assign $1 $3}
 
 
@@ -98,7 +98,7 @@ Exprs : Expr Exprs                  {$1 : $2}
 Paterns : Patern Paterns            {$1 : $2}
         | Patern                    {[$1]}
 
-Patern : Expr ':' Expr               {[$1] : $3}
+Patern : Lit ":" Expr               {pair $1 $3}
 
 FuncVars : var FuncVars             {$1 : $2}
          | var                      {[$1]}
@@ -109,13 +109,16 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 data Expr = Let String Expr Expr
-    | Case Expr [[Expr]] Expr
+    | Case Expr [(Lit, Expr)] Expr
     | FuncCall String [Expr]
     | FuncDeclar String [String] Expr
     | Un String Expr
     | Bin String Expr Expr
     | Var String
-    | Cst Int
+    | Lit Lit
+    deriving (Show, Eq)
+
+data Lit = Cst Int
     | LBool Bool
     | LTuple Expr Expr
     deriving (Show)
