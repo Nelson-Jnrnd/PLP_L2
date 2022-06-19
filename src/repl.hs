@@ -1,3 +1,10 @@
+{-
+    Nom du fichier : repl.hs
+    Auteurs :
+        - Nelson Jeanrenaud
+        - Alice Grunder
+-}
+
 module Main where
 
 import Lexer

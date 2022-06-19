@@ -1,3 +1,9 @@
+{-
+    Nom du fichier : lexer.hs
+    Auteurs :
+        - Nelson Jeanrenaud
+        - Alice Grunder
+-}
 {
 module Lexer (lexer , Token (..)) where
 }
