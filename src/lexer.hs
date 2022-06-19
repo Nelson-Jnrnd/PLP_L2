@@ -4485,7 +4485,7 @@ data Token
     | TLBrace
     | TRBrace
     | TComma
-    | TSym Char
+    | TSym String
     | TLet
     | TIn
     | TOf
@@ -4512,7 +4512,7 @@ alex_action_14 =  \s -> TOf
 alex_action_15 =  \s -> TVar s              
 alex_action_16 =  \s -> TFunc s             
 alex_action_17 =  \s -> TInt (read s)       
-alex_action_18 =  \s -> TSym (head s)       
+alex_action_18 =  \s -> TSym (s)       
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- -----------------------------------------------------------------------------
 -- ALEX TEMPLATE

@@ -32,7 +32,7 @@ tokens :-
     @name                          { \s -> TVar s              }
     @func                          { \s -> TFunc s             }    
     $digit+                        { \s -> TInt (read s)       }
-    [\_\=\+\-\*\/\^\%\|\&\!]       { \s -> TSym (head s)       }
+    [\_\=\+\-\*\/\^\%\|\&\!]       { \s -> TSym (s)       }
 {
 -- Each action has type :: String -> Token
 
@@ -49,7 +49,7 @@ data Token
     | TLBrace
     | TRBrace
     | TComma
-    | TSym Char
+    | TSym String
     | TLet
     | TIn
     | TOf
