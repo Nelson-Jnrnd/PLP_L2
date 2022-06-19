@@ -17,7 +17,7 @@ variable -> VARIABLE_NAME
 
 littéral -> INT | BOOL | tuple
 
-tuple -> '[' littéral ',' littéral ']'
+tuple -> '[' expression ',' expression ']'
 
 unaire -> [-|!] operand 
 
@@ -27,7 +27,7 @@ operand -> variable | littéral
 
 declaration -> variable = littéral
 
-functionDeclaration -> FUNCTION_NAME '(' {variable} ')' '{' {expression} '}'
+functionDeclaration -> FUNCTION_NAME '(' {variable} ')' '{' expression '}'
 
 functionCall -> FUNCTION_NAME '(' {expression} ')'
 
@@ -37,12 +37,7 @@ expression ->
     | binaire 
     | declaration
     | let  declaration in expression 
-    | case expression of { pattern ':' expression }
+    | case expression of { expression ':' expression }
     | functionDeclaration
     | functionCall
-
-pattern -> 
-    _
-    | variable
-    | littéral
 

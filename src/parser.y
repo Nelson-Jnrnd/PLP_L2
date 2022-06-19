@@ -62,9 +62,9 @@ import Lexer
 Expr : let var '=' Expr in Expr             {Let $2 $4 $6}
      | case Expr of Paterns '_' ':' Expr    {Case $2 $4 $7}
      | func '(' Exprs ')'                   {FuncCall $1 $3}
-     | func '(' ')'                         {FuncCall $1 _}
-     | func '(' FuncVars ')' '{' Expr '}'   {FuncDeclar $1 $3 $5}
-     | func '(' ')' '{' Expr '}'            {FuncDeclar $1 _ $4}
+     | func '(' ')'                         {FuncCall $1 []}
+     | func '(' FuncVars ')' '{' Expr '}'   {FuncDeclar $1 $3 $6}
+     | func '(' ')' '{' Expr '}'            {FuncDeclar $1 [] $5}
      | '-' Expr %prec NEG                   {Un '-' $2}
      | Expr '+' Expr                        {Bin '+' $1 $3}
      | Expr '-' Expr                        {Bin '-' $1 $3}
@@ -77,7 +77,9 @@ Expr : let var '=' Expr in Expr             {Let $2 $4 $6}
      | Expr '|' Expr                        {Bin '|' $1 $3}
      | var '=' Expr                         {Assign $1 $3}
      | var                                  {Var $1}
-     | Lit                                  {$1}
+     | int                                  {Cst $1}
+     | bool                                 {LBool $1}
+     | '[' Expr ',' Expr ']'                {LTuple $2 $4}
 
 Exprs : Expr Exprs                  {$1 : $2}
       | Expr                        {[$1]}
@@ -85,35 +87,30 @@ Exprs : Expr Exprs                  {$1 : $2}
 Paterns : Patern Paterns            {$1 : $2}
         | Patern                    {[$1]}
 
-Patern : Lit ':' Expr               {$1 : $3}
+Patern : Expr ':' Expr               {[$1] : $3}
 
-FuncVars : var FuncVars             {$2 : $1}
+FuncVars : var FuncVars             {$1 : $2}
          | var                      {[$1]}
 
-Lit : int                                  {Cst $1}
-    | bool                                 {LBool $1}
-    | '[' Expr ',' Expr ']'                {LTuple $2 $4}
 
 {
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 data Expr = Let String Expr Expr
-    | Case Expr [Patern]
+    | Case Expr [[Expr]] Expr
     | FuncCall String [Expr]
     | FuncDeclar String [String] [Expr]
     | Un Char Expr
     | Bin Char Expr Expr
     | Assign String Expr
     | Var String
-    | Lit Lit
-    deriving (Show, Eq)
-
-data Patern = Patern Lit Expr
-    deriving (Show, Eq)
-
-data Lit = Cst Int
+    | Cst Int
     | LBool Bool
     | LTuple Expr Expr
-    deriving (Show, Eq)
+    deriving (Show)
+
+
+
+
 }
