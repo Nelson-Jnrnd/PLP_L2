@@ -59,18 +59,18 @@ evalExpr env expr =
         Cst i -> Cst i
         LBool b -> LBool b
         LTuple e1 e2 -> LTuple (evalExpr env e1) (evalExpr env e2)
-        Var s ->
-            case lookupInEnv s env of
+        Var name ->
+            case lookupInEnv name env of
                 Just (EnvLit lit) -> lit
-                _ -> error $ "Variable " ++ s ++ " not found"
+                _ -> error $ "Variable " ++ name ++ " not found"
         Bin op e1 e2 -> evalBin op (evalExpr env e1) (evalExpr env e2)
         Unary op e -> evalUnary op (evalExpr env e)
-        --FuncCall s e ->
-        --   case lookupInEnv s env of
-        --        Just (EnvFunction args body) ->
-        --            let env' = zip args (map (evalExpr env) e)
-        --            in 
-        --        _ -> error $ "Function " ++ s ++ " not found"
+        FuncCall name argsValue ->
+           case lookupInEnv name env of
+                Just (EnvFunction args body) ->
+                    let env' = zip args (map (evalExpr env) argsValue)
+                    -- ??
+                _ -> error $ "Function " ++ name ++ " not found"
         Case e paterns otherwise ->
             let lit = evalExpr env e
             in case lookup lit paterns of
@@ -83,7 +83,7 @@ evalStatement :: Env -> Statement -> (String, EnvValue)
 evalStatement env stmt =
     case stmt of
         FuncDeclar name args expr -> (name, EnvFunction args expr)
-        Assign s e -> (s, evalExpr env e)
+        Assign varname e -> (varname, evalExpr env e)
 
 eval :: Program -> Env -> EvalReturn
 eval (PExpr expr) env = Expr (evalExpr env expr)
