@@ -18,7 +18,7 @@ data EvalReturn =
 
 data EnvValue =
     EnvLit Lit
-  | EnvFunction [String] [Expr]
+  | EnvFunction [String] Expr
   deriving (Show)
 
 data Lit =
@@ -75,7 +75,7 @@ evalExpr env expr =
            case lookupInEnv name env of
                 Just (EnvFunction args body) ->
                     let env' = zip args (map (evalExpr env) argsValue)
-                    -- ??
+                    in evalExpr env' body
                 _ -> error $ "Function " ++ name ++ " not found"
         Case e paterns otherwise ->
             let lit = evalExpr env e
