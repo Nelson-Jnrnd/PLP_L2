@@ -55,7 +55,7 @@ import Lexer
 %left "^"
 %right "&" "|"
 %right "!"
-%left NEG
+%left NEG NOT
 
 %%
 
@@ -80,7 +80,7 @@ Expr : let var "=" Expr in Expr             {Let $2 $4 $6}
      | Expr "/" Expr                        {Bin "/" $1 $3}
      | Expr "%" Expr                        {Bin "%" $1 $3}
      | Expr "^" Expr                        {Bin "^" $1 $3}
-     | "!" Expr                             {Un "!" $2}
+     | "!" Expr %prec NOT                   {Un "!" $2}
      | Expr "&" Expr                        {Bin "&" $1 $3}
      | Expr "|" Expr                        {Bin "|" $1 $3}
      | var                                  {Var $1}
