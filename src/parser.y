@@ -6,7 +6,7 @@
 -}
 
 {
-module Parser (Expr (..), Lit (..), Program(..), Statement(..)) where
+module Parser (Expr (..), Program(..), Statement(..)) where
 import Lexer
 }
 
@@ -43,19 +43,18 @@ import Lexer
     "|"     { TSym  "|" }
     "%"     { TSym  "%" }
     "^"     { TSym  "^" }
-    "True"  { TBool True }
-    "False" { TBool False }
 
 
 -- Définition des priorités et associativités
 %right of
 %right in
-%left '+' '-'
-%left '*' '/' 
-%left '%'
-%left '^'
-%right '&' '|'
-%right '!'
+%nonassoc  "="
+%left "+" "-"
+%left "*" "/" 
+%left "%"
+%left "^"
+%right "&" "|"
+%right "!"
 %left NEG
 
 %%
@@ -65,17 +64,15 @@ Program :
     | Statement                             { PStatement $1 }
 
 Statement : func "(" FuncVars ")" "{" Expr "}"   {FuncDeclar $1 $3 $6}
-     | func "(" ")" "{" Expr "}"            {FuncDeclar $1 _ $5}
+     | func "(" ")" "{" Expr "}"            {FuncDeclar $1 [] $5}
      | var "=" Expr                         {Assign $1 $3}
 
 
 -- Régle de la grammaire
-Expr : "True"                               {TBool True}
-     | "False"                              {TBool False}
-     | let var "=" Expr in Expr             {Let $2 $4 $6}
+Expr : let var "=" Expr in Expr             {Let $2 $4 $6}
      | case Expr of Paterns "_" ":" Expr    {Case $2 $4 $7}
      | func "(" Exprs ")"                   {FuncCall $1 $3}
-     | func "(" ")"                         {FuncCall $1 _}
+     | func "(" ")"                         {FuncCall $1 []}
      | "-" Expr %prec NEG                   {Un "-" $2}
      | Expr "+" Expr                        {Bin "+" $1 $3}
      | Expr "-" Expr                        {Bin "-" $1 $3}
@@ -87,8 +84,9 @@ Expr : "True"                               {TBool True}
      | Expr "&" Expr                        {Bin "&" $1 $3}
      | Expr "|" Expr                        {Bin "|" $1 $3}
      | var                                  {Var $1}
-     | Lit                                  {$1}
-     
+     | int                                  {Cst $1}
+     | bool                                 {LBool $1}
+     | "[" Expr "," Expr "]"                {LTuple $2 $4}
 
 Exprs : Expr Exprs                  {$1 : $2}
       | Expr                        {[$1]}
@@ -96,40 +94,31 @@ Exprs : Expr Exprs                  {$1 : $2}
 Paterns : Patern Paterns            {$1 : $2}
         | Patern                    {[$1]}
 
-Patern : Lit ":" Expr               {pair $1 $3}
+Patern : Expr ":" Expr               {[$1] : $3}
 
-FuncVars : var FuncVars             {$2 : $1}
+FuncVars : var FuncVars             {$1 : $2}
          | var                      {[$1]}
-
-Lit : int                                  {Cst $1}
-    | bool                                 {LBool $1}
-    | "[" Expr "," Expr "]"                {LTuple $2 $4}
 
 {
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 data Expr = Let String Expr Expr
-    | Case Expr [(Lit, Expr)] Expr
+    | Case Expr [[Expr]] Expr
     | FuncCall String [Expr]
     | Un String Expr
     | Bin String Expr Expr
     | Var String
-    | Lit Lit
-    deriving (Show, Eq)
-
-data Lit = Cst Int
+    | Cst Int
     | LBool Bool
     | LTuple Expr Expr
     deriving (Show, Eq)
 
-data Statement = 
-    FuncDeclar String [String] [Expr]
+data Statement = FuncDeclar String [String] Expr
     | Assign String Expr
     deriving (Show, Eq)
 
-data Program
-    = PExpr Expr
+data Program = PExpr Expr
     | PStatement Statement
     deriving (Show, Eq)
 
