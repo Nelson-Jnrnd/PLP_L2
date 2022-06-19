@@ -36,8 +36,11 @@ expression ->
     | unaire
     | binaire 
     | declaration
-    | let  declaration in expression 
-    | case expression of { expression ':' expression }
-    | functionDeclaration
+    | let declaration in expression 
+    | case expression of { expression ':' expression } '_' expression
     | functionCall
+
+statement -> 
+    declaration
+    | functionDeclaration
 

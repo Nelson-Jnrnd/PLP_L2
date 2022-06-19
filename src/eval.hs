@@ -67,9 +67,8 @@ evalExpr env expr =
         Unary op e -> evalUnary op (evalExpr env e)
         FuncCall name argsValue ->
            case lookupInEnv name env of
-                Just (EnvFunction args body) ->
-                    let env' = zip args (map (evalExpr env) argsValue)
-                    -- ??
+                Just (EnvFunction args body) -> let env' = zip args (map (evalExpr env) argsValue)
+                    -- il te manque un in dans ton let non ?
                 _ -> error $ "Function " ++ name ++ " not found"
         Case e paterns otherwise ->
             let lit = evalExpr env e
