@@ -6,7 +6,7 @@
 -}
 
 {
-module Parser (Expr (..), Patern (..), Lit (..), Name) where
+module Parser (Expr (..), Patern (..), Lit (..), Program(..), Statement(..), Name) where
 import Lexer
 }
 
@@ -24,25 +24,27 @@ import Lexer
     bool    { TBool $$  }
     var     { TVar  $$  }
     func    { TFunc $$  }
-    '('     { TLParen   }
-    ')'     { TRParen   }
-    '{'     { TLBrace   }
-    '}'     { TRBrace   }
-    '['     { TLBracket }
-    ']'     { TRBracket }
-    ':'     { TColon    }
-    ','     { TComma    }
-    '_'     { TSym  '_' }
-    '='     { TSym  '=' }
-    '+'     { TSym  '+' }
-    '-'     { TSym  '-' }
-    '*'     { TSym  '*' }
-    '/'     { TSym  '/' }
-    '!'     { TSym  '!' }
-    '&'     { TSym  '&' }
-    '|'     { TSym  '|' }
-    '%'     { TSym  '%' }
-    '^'     { TSym  '^' }
+    "("     { TLParen   }
+    ")"     { TRParen   }
+    "{"     { TLBrace   }
+    "}"     { TRBrace   }
+    "["     { TLBracket }
+    "]"     { TRBracket }
+    ":"     { TColon    }
+    ","     { TComma    }
+    "_"     { TSym  "_" }
+    "="     { TSym  "=" }
+    "+"     { TSym  "+" }
+    "-"     { TSym  "-" }
+    "*"     { TSym  "*" }
+    "/"     { TSym  "/" }
+    "!"     { TSym  "!" }
+    "&"     { TSym  "&" }
+    "|"     { TSym  "|" }
+    "%"     { TSym  "%" }
+    "^"     { TSym  "^" }
+    "True"  { TBool True }
+    "False" { TBool False }
 
 
 -- Définition des priorités et associativités
@@ -57,6 +59,15 @@ import Lexer
 %left NEG
 
 %%
+
+Program :
+    Expr                                    { PExpr $1 }
+    | Statement                             { PStatement $1 }
+
+Statement : func "(" FuncVars ")" "{" Expr "}"   {FuncDeclar $1 $3 $5}
+     | func "(" ")" "{" Expr "}"            {FuncDeclar $1 _ $4}
+     | var "=" Expr                         {Assign $1 $3}
+
 
 -- Régle de la grammaire
 Expr : let var '=' Expr in Expr             {Let $2 $4 $6}
@@ -100,10 +111,8 @@ parseError _ = error "Parse error"
 data Expr = Let String Expr Expr
     | Case Expr [[Expr]] Expr
     | FuncCall String [Expr]
-    | FuncDeclar String [String] [Expr]
-    | Un Char Expr
-    | Bin Char Expr Expr
-    | Assign String Expr
+    | Un String Expr
+    | Bin String Expr Expr
     | Var String
     | Cst Int
     | LBool Bool
