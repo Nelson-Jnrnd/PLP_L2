@@ -6,7 +6,7 @@
 -}
 
 {
-module Parser (Expr (..), Program(..), Statement(..)) where
+module Parser (Expr (..), Pat (..), Program(..), Statement(..)) where
 import Lexer
 }
 
@@ -94,7 +94,7 @@ Exprs : Expr Exprs                  {$1 : $2}
 Paterns : Patern Paterns            {$1 : $2}
         | Patern                    {[$1]}
 
-Patern : Expr ":" Expr               {[$1] : $3}
+Patern : Expr ":" Expr               {Pat $1 $3}
 
 FuncVars : var FuncVars             {$1 : $2}
          | var                      {[$1]}
@@ -104,7 +104,7 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 data Expr = Let String Expr Expr
-    | Case Expr [[Expr]] Expr
+    | Case Expr [Pat] Expr
     | FuncCall String [Expr]
     | Un String Expr
     | Bin String Expr Expr
@@ -113,6 +113,8 @@ data Expr = Let String Expr Expr
     | LBool Bool
     | LTuple Expr Expr
     deriving (Show, Eq)
+
+data Pat = Pat Expr Expr deriving (Show, Eq)
 
 data Statement = FuncDeclar String [String] Expr
     | Assign String Expr

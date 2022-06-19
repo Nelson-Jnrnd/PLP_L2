@@ -9,25 +9,25 @@ module Main where
 
 import Lexer
 import Parser
---import Semantic
+import Semantics
 import Eval
-import System.IO
+import System.IO 
 
 
 repl :: Env -> IO ()
-repl env =
+repl env typeEnv =
     do
         putStr "> "
         hFlush stdout
         line <- getLine
         let token = alexScanTokens line -- lexing
         let ast = parser token -- parsing
-        --let (t, newEnvType) = typeof ast env -- typechecking
+        let newTypeEnv = myProgCheck ast env -- typechecking
         let evalReturn = eval ast env -- evaluation
         let newEnv = case evalReturn of
                         Expr lit -> env
                         Def envEntry -> envEntry : env
         putStr "\n"
-        repl newEnv
+        repl newEnv newTypeEnv
 
-main = repl []
+main = repl [] []

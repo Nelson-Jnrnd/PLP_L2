@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -w #-}
-module Parser (Expr (..), Program(..), Statement(..)) where
+module Parser (Expr (..), Pat (..), Program(..), Statement(..)) where
 import Lexer
 import qualified Data.Array as Happy_Data_Array
 import qualified Data.Bits as Bits
@@ -896,7 +896,7 @@ happyReduction_28 (HappyAbsSyn6  happy_var_3)
 	_
 	(HappyAbsSyn6  happy_var_1)
 	 =  HappyAbsSyn9
-		 ([happy_var_1] : happy_var_3
+		 (Pat happy_var_1 happy_var_3
 	)
 happyReduction_28 _ _ _  = notHappyAtAll 
 
@@ -987,7 +987,7 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 data Expr = Let String Expr Expr
-    | Case Expr [[Expr]] Expr
+    | Case Expr [Pat] Expr
     | FuncCall String [Expr]
     | Un String Expr
     | Bin String Expr Expr
@@ -996,6 +996,8 @@ data Expr = Let String Expr Expr
     | LBool Bool
     | LTuple Expr Expr
     deriving (Show, Eq)
+
+data Pat = Pat Expr Expr deriving (Show, Eq)
 
 data Statement = FuncDeclar String [String] Expr
     | Assign String Expr
