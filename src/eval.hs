@@ -31,6 +31,10 @@ lookupInEnv :: String -> Env -> Maybe EnvValue
 lookupInEnv x [] = Nothing
 lookupInEnv x ((y, v):xs) = if x == y then Just v else lookupInEnv x xs
 
+lookupInPatterns :: Expr -> [[Expr]] -> Maybe [Expr]
+lookupInPatterns _ [] = Nothing
+lookupInPatterns e ((p:ps):pps) = if e == p then Just ps else lookupInPatterns e pps
+
 evalUnary :: String -> Lit -> Lit
 evalUnary op (Cst x) =
     case op of
@@ -78,10 +82,10 @@ evalExpr env expr =
                     in evalExpr env' body
                 _ -> error $ "Function " ++ name ++ " not found"
         Case e paterns otherwise ->
-            let lit = evalExpr env e
-            in case lookup lit paterns of
-                        Just e' -> evalExpr env e'
-                        _ -> evalExpr env otherwise
+            case lookupInPatterns e paterns of
+                Just es -> evalExpr env (last es) 
+                Just [] -> evalExpr env otherwise
+                _ -> error $ "Case not found"
         Let s e e' -> evalExpr ((s, e):env) e'
         _ -> error ("Unknown expression: " ++ show expr)
 
