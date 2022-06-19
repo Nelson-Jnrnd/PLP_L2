@@ -70,27 +70,25 @@ Statement : func "(" FuncVars ")" "{" Expr "}"   {FuncDeclar $1 $3 $6}
 
 
 -- Régle de la grammaire
-Expr : let var '=' Expr in Expr             {Let $2 $4 $6}
-     | case Expr of Paterns '_' ':' Expr    {Case $2 $4 $7}
-     | func '(' Exprs ')'                   {FuncCall $1 $3}
-     | func '(' ')'                         {FuncCall $1 []}
-     | func '(' FuncVars ')' '{' Expr '}'   {FuncDeclar $1 $3 $6}
-     | func '(' ')' '{' Expr '}'            {FuncDeclar $1 [] $5}
-     | '-' Expr %prec NEG                   {Un '-' $2}
-     | Expr '+' Expr                        {Bin '+' $1 $3}
-     | Expr '-' Expr                        {Bin '-' $1 $3}
-     | Expr '*' Expr                        {Bin '*' $1 $3}
-     | Expr '/' Expr                        {Bin '/' $1 $3}
-     | Expr '%' Expr                        {Bin '%' $1 $3}
-     | Expr '^' Expr                        {Bin '^' $1 $3}
-     | '!' Expr                             {Un '!' $2}
-     | Expr '&' Expr                        {Bin '&' $1 $3}
-     | Expr '|' Expr                        {Bin '|' $1 $3}
-     | var '=' Expr                         {Assign $1 $3}
+Expr : "True"                               {TBool True}
+     | "False"                              {TBool False}
+     | let var "=" Expr in Expr             {Let $2 $4 $6}
+     | case Expr of Paterns "_" ":" Expr    {Case $2 $4 $7}
+     | func "(" Exprs ")"                   {FuncCall $1 $3}
+     | func "(" ")"                         {FuncCall $1 _}
+     | "-" Expr %prec NEG                   {Un "-" $2}
+     | Expr "+" Expr                        {Bin "+" $1 $3}
+     | Expr "-" Expr                        {Bin "-" $1 $3}
+     | Expr "*" Expr                        {Bin "*" $1 $3}
+     | Expr "/" Expr                        {Bin "/" $1 $3}
+     | Expr "%" Expr                        {Bin "%" $1 $3}
+     | Expr "^" Expr                        {Bin "^" $1 $3}
+     | "!" Expr                             {Un "!" $2}
+     | Expr "&" Expr                        {Bin "&" $1 $3}
+     | Expr "|" Expr                        {Bin "|" $1 $3}
      | var                                  {Var $1}
-     | int                                  {Cst $1}
-     | bool                                 {LBool $1}
-     | '[' Expr ',' Expr ']'                {LTuple $2 $4}
+     | Lit                                  {$1}
+     
 
 Exprs : Expr Exprs                  {$1 : $2}
       | Expr                        {[$1]}
@@ -100,9 +98,12 @@ Paterns : Patern Paterns            {$1 : $2}
 
 Patern : Lit ":" Expr               {pair $1 $3}
 
-FuncVars : var FuncVars             {$1 : $2}
+FuncVars : var FuncVars             {$2 : $1}
          | var                      {[$1]}
 
+Lit : int                                  {Cst $1}
+    | bool                                 {LBool $1}
+    | "[" Expr "," Expr "]"                {LTuple $2 $4}
 
 {
 parseError :: [Token] -> a
@@ -111,7 +112,6 @@ parseError _ = error "Parse error"
 data Expr = Let String Expr Expr
     | Case Expr [(Lit, Expr)] Expr
     | FuncCall String [Expr]
-    | FuncDeclar String [String] Expr
     | Un String Expr
     | Bin String Expr Expr
     | Var String
@@ -121,9 +121,16 @@ data Expr = Let String Expr Expr
 data Lit = Cst Int
     | LBool Bool
     | LTuple Expr Expr
-    deriving (Show)
+    deriving (Show, Eq)
 
+data Statement = 
+    FuncDeclar String [String] [Expr]
+    | Assign String Expr
+    deriving (Show, Eq)
 
-
+data Program
+    = PExpr Expr
+    | PStatement Statement
+    deriving (Show, Eq)
 
 }
