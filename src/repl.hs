@@ -24,10 +24,9 @@ repl env =
         let ast = parser token -- parsing
         --let (t, newEnvType) = typeof ast env -- typechecking
         let evalReturn = eval ast env -- evaluation
-        let newEnv = 
-            case evalReturn of
-                Expr lit -> env
-                Def envEntry -> envEntry : env
+        let newEnv = case evalReturn of
+                        Expr lit -> env
+                        Def envEntry -> envEntry : env
         putStr "\n"
         repl newEnv
 
