@@ -1,6 +1,12 @@
+{-
+    Nom du fichier : eval.hs
+    Auteurs :
+        - Nelson Jeanrenaud
+        - Alice Grunder
+-}
 module Eval(eval, Env(..), EnvValue(..), Lit(..), EvalReturn(..)) where
 
--- import Semantics
+import Semantics
 import Parser
 import Prelude hiding (lookup)
 
