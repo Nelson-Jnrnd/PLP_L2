@@ -111,6 +111,7 @@ parseError _ = error "Parse error"
 data Expr = Let String Expr Expr
     | Case Expr [[Expr]] Expr
     | FuncCall String [Expr]
+    | FuncDeclar String [String] Expr
     | Un String Expr
     | Bin String Expr Expr
     | Var String
