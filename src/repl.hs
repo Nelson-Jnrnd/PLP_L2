@@ -14,20 +14,18 @@ import Eval
 import System.IO 
 
 
-repl :: Env -> IO ()
+repl :: Env -> TypeEnv -> IO ()
 repl env typeEnv =
     do
         putStr "> "
         hFlush stdout
         line <- getLine
-        let token = alexScanTokens line -- lexing
+        let token = lexer line -- lexing
         let ast = parser token -- parsing
-        let newTypeEnv = myProgCheck ast env -- typechecking
+        let newTypeEnv = myProgCheck ast typeEnv -- typechecking
         let evalReturn = eval ast env -- evaluation
-        let newEnv = case evalReturn of
-                        Expr lit -> env
-                        Def envEntry -> envEntry : env
+        print (fst evalReturn) -- printing the result
         putStr "\n"
-        repl newEnv newTypeEnv
+        repl (snd evalReturn) newTypeEnv
 
 main = repl [] []

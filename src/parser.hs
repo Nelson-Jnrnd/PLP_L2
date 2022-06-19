@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -w #-}
-module Parser (Expr (..), Pat (..), Program(..), Statement(..)) where
+module Parser (parser, Expr (..), Pat (..), Program(..), Statement(..)) where
 import Lexer
 import qualified Data.Array as Happy_Data_Array
 import qualified Data.Bits as Bits

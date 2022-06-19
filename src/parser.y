@@ -6,7 +6,7 @@
 -}
 
 {
-module Parser (Expr (..), Pat (..), Program(..), Statement(..)) where
+module Parser (parser, Expr (..), Pat (..), Program(..), Statement(..)) where
 import Lexer
 }
 
